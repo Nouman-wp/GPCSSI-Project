@@ -54,3 +54,51 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`ChainWatch server running on port ${PORT}`);
 });
+
+// Step 2: MongoDB Models - models/Case.js and models/Wallet.js
+
+// models/Case.js
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const caseSchema = new Schema({
+  title: String,
+  description: String,
+  status: {
+    type: String,
+    enum: ['Open', 'Under Investigation', 'Closed'],
+    default: 'Open'
+  },
+  officer: String,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model('Case', caseSchema);
+
+// models/Wallet.js
+const walletSchema = new Schema({
+  caseId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Case'
+  },
+  address: String,
+  label: {
+    type: String,
+    enum: ['Victim', 'Suspect', 'Funnel Wallet', 'Unknown'],
+    default: 'Unknown'
+  },
+  notes: String,
+  txHistory: Array,
+  tokens: Array,
+  counterparties: Array,
+  exchangeInteractions: Array,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model('Wallet', walletSchema);
